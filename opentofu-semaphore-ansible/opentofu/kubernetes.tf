@@ -2,6 +2,11 @@ resource "kubernetes_secret" "ssh_keys" {
     metadata {
         name = "ssh_keys"
         namespace = kubernetes_namespace.opentofu_ansible.metadata[0].name
+        labels = {
+            app = "opentofu-ansible-integration"
+            component = "ssh-keys" 
+            managed-by = "opentofu"
+        }
     }
     data = {
         "id_rsa" = file("~/.ssh/id_rsa")
@@ -10,13 +15,36 @@ resource "kubernetes_secret" "ssh_keys" {
     tpye = "Opaque"
 }
 
-resource "kubernetes_secret" "mysql_secret" {
+resource "kubernetes_secret" "mysql_credentials" {
+    count = var.enable_mysql ? 1 : 0
+
     metadata {
-        name = "mysql-secret"
+        name = "mysql_credentials"
         namespace = kubernetes_namespace.opentofu_ansible.metadata[0].name 
+        labels = {
+            app = "opentofu-ansible-integration"
+            component = "mysql" 
+            managed-by = "opentofu"
+        }
     }
     data = {
-        password = var.mysql_root_password
+        "root_password" = var.mysql_root_password
+        "database" = var.mysql_database
     }
-    type = "kubernetes.io/basic-auth"
+    type = "Opaque"
+}
+
+resource "kubernetes_config_map" "ansible_config" {
+    metadata {
+        name = "ansible-config"
+        namespace = kubernetes_namespace.opentofu_ansible.metadata[0].name
+        labels = {
+            app  = "opentofu-ansible-integration"
+            component = "ansible"
+            managed-by = "opentofu"
+        }
+    }
+    data = {
+        "ansible.cfg" = file("../ansible/ansible.cfg")
+    }
 }
