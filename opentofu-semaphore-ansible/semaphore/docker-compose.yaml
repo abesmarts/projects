@@ -26,7 +26,12 @@ services:
             SEMAPHORE_ADMIN_PASSWORD: changeme
             SEMAPHORE_ADMIN_NAME: Admin
             SEMAPHORE_ADMIN_EMAIL: admin@localhost
+            SEMAPHORE_PLAYBOOK_PATH: /tmp/semaphore/
         volumes:
+            - ~/.kube:/home/semaphore/.kube
+            - ~/.ssh:/home/semaphore/.ssh
+            - ../opentofu:/tmp/opentofu
+            - .../ansible:/tmp/ansible
             - semaphore_data:/var/lib/semaphore
             - semaphore_config:/etc/semaphore
             - semaphore_tmp:/tmp/semaphore
