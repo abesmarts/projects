@@ -1,0 +1,22 @@
+- name: Update package cache
+  package:
+    update_cache: yes
+  when: ansible_os_family == "Debian" or ansible_os_family == "RedHat"
+
+- name: Install common packages
+  package:
+    name:
+      - curl
+      - wget
+      - vim
+      - net-tools
+    stats: present
+- name: Set up custom profile
+  blockinfile:
+    path: "{{ profile_path }}"
+    create: yes
+    block: 
+      export PATH=$PATH:/usr/local/bin 
+      export LANG=en_US.UTF-8
+  vars:
+    profile_path: "{{ ansible_os_family =='Debian' | ternary('/etc/profile.d/custom.sh','/etc/profile.d/custom.sh') }}"

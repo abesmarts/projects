@@ -1,0 +1,12 @@
+- hosts: ubuntu
+  become: yes
+  roles: 
+    - common
+  tasks:
+    - name: Install Ubuntu-specific packages
+      apt:
+        name:
+          - python3-pip 
+          - software-properties-common
+        state: present
+      

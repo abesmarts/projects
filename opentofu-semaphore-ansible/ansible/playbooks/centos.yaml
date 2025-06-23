@@ -1,0 +1,12 @@
+- hosts: centos
+  become: yes
+  roles:
+    - common
+  tasks:
+    - name: Install CentOS-specific packages
+      yum:
+        name:
+          - python3-pip
+          - epel-release
+        state: present
+        
