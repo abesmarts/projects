@@ -4,17 +4,11 @@ resource "kubernetes_deployment" "unbuntu_vm" {
         namespace = kubernetes_namespace.opentofu_ansible.metadata[0].name
     }
     spec {
-        replicas = 1
+        replicas = var.vm_replicas
         selector {
             match_labels = {
                 app = "ubuntu-vm"
             }
-            port {
-                port = 22
-                target_port = 22
-                node_port =  30222
-            }
-            type = "NodePort"
         }
         template {
             metadata {
@@ -27,6 +21,18 @@ resource "kubernetes_deployment" "unbuntu_vm" {
                     image = "unbuntu:20.04"
                     name = "unbuntu"
                     command = ["/bin/bash", "-c", "sleep infinity"]
+
+                    volume_mount {
+                        name = "ssh-keys"
+                        mount_path = "/root/.ssh"
+                        read_only = true
+                    }
+                }
+                volume {
+                    name = "ssh-keys"
+                    secret{
+                        secret_name = kubernetes_secret.ssh_keys.metadata[0].name
+                    }
                 }
             }
         }
@@ -56,7 +62,20 @@ resource "kubernetes_deployment" "centos_vm" {
                 image = "centos:7"
                 name = "centos"
                 command = ["/bin/bash", "-c", "sleep infinity"]
+
+                volume_mount {
+                    name = "ssh-keys"
+                    mount_path = "/root/.ssh"
+                    read_only = true
+                
+                    }
                 }
+             volume {
+                name = "ssh-keys"
+                secret {
+                    secret_name = kubernetes_secret.ssh_keys.metadata[0].name
+                }
+             }   
             }
         } 
     }

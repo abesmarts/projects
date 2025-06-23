@@ -1,4 +1,5 @@
 terraform {
+    required_version = ">= 1.0"
     required_providers {
         kubernetes = {
             source = "hashicorp/kubernetes"
@@ -14,9 +15,11 @@ provider "kubernetes" {
 
 resource "kubernetes_namespace" "opentofu_ansible" {
     metadata {
-        name="opentofu-ansible"
+        name= var.kubernetes_namespace
         labels = {
-            app = "opentofu-ansible-integration"
+            app= "opentofu-ansible-integration"
+            environment= "development"
+            managed-by= "opentofu"
         }
     }
 }
