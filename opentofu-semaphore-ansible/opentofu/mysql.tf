@@ -1,22 +1,33 @@
 resource "kubernetes_persistent_volume_claim" "mysql_pvc" {
+    count = var.enable_mysql ? 1 : 0 
     metadata {
         name = "mysql-pv-claim"
         namespace = kubernetes_namespace.opentofu_ansible.metadata[0].name 
+        labels = {
+            app = "mysql"
+            managed-by = "opentofu"
+        }
     }
     spec {
         access_modes = ["ReadWriteOnce"]
         resources {
             requests = {
-                storage = "1Gi"
+                storage = "2Gi"
             }
         }
     }
 }
 
 resource "kubernetes_deployment" "mysql" {
+    count = var.enable_mysql ? 1 : 0
+
     metadata {
         name = "mysql"
         namespace = kubernetes_namespace.opentofu_ansible.metadata[0].name 
+        labels = {
+            app = "mysql"
+            managed-by = "opentofu"
+        }
     }
     spec {
         selector {
@@ -42,7 +53,16 @@ resource "kubernetes_deployment" "mysql" {
                         value_from {
                             secret_key_ref {
                                 name = kubernetes_secret.mysql_secret.metadata[0].name
-                                key = "password"
+                                key = "root-password"
+                            }
+                        }
+                    }
+                    env {
+                        name = "MYSQL_DATABASE"
+                        value_from {
+                            secret_key_ref {
+                                name = kubernetes_secret.mysql_credentials[0].metadata[0].name
+                                key = "database"
                             }
                         }
                     }
@@ -54,7 +74,18 @@ resource "kubernetes_deployment" "mysql" {
                         name = "mysql-persistent-storage"
                         mount_path = "/var/lib/mysql"
                     }
+                    resource {
+                        requests = {
+                            memory = "512Mi"
+                            cpu = "250m"
+                        }
+                        limits = {
+                            memory = "1Gi"
+                            cpu = "500m"
+                        }
+                    }
                 }
+
                 volume {
                     name = "mysql-persistent-storage"
                     persistent_volume_claim {
@@ -70,6 +101,10 @@ resource "kubernetes_service" "mysql" {
     metadata {
         name = "mysql"
         namespace = kubernetes_namespace.opentofu_ansible.metadata[0].name
+        labels = {
+            app = "mysql"
+            managed-by = "opentofu"
+        }
     }
     spec {
         selector = {
@@ -78,6 +113,8 @@ resource "kubernetes_service" "mysql" {
         port {
             port = 3306
             target_port = 3306
+            name = "mysql"
         }
+        type = "ClusterIP"
     }
 }
