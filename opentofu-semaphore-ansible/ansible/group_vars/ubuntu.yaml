@@ -1,0 +1,31 @@
+# ubuntu specific vars
+ansible_python_interpreter: /usr/bin/python3
+ansible_os_family: Debian
+package_manager: apt 
+
+#packages to install
+os_packages:
+  - python3-pip 
+  - software-properties-common
+  - curl
+  - wget
+  - vim
+  - net-tools
+  - htop
+  - tree
+  - git
+
+# service config
+services_to_enable:
+  - ssh
+
+profile_path: /etc/profile.d/custom.sh
+bash_profile_path: /root/.bashrc
+
+mysql_client_package: mysql-client 
+
+custom_env_vars:
+  PATH: "$PATH:/usr/local/bin"
+  LANG: "en_US.UTF-8"
+  LC_ALL: "en_US.UTF-8"
+
