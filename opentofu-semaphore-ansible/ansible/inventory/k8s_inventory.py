@@ -1,4 +1,7 @@
-import json, sys, subprocess, argparse
+import json
+import sys
+import subprocess
+import argparse
 from typing import Dict, Any, List
 
 def run_kubectl_command(args: List[str]) -> str:
