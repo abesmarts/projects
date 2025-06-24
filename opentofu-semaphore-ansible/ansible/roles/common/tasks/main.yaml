@@ -2,21 +2,62 @@
   package:
     update_cache: yes
   when: ansible_os_family == "Debian" or ansible_os_family == "RedHat"
+  tags: ['packages']
 
 - name: Install common packages
   package:
     name:
-      - curl
-      - wget
-      - vim
-      - net-tools
+      {{ os_packages }}
     stats: present
-- name: Set up custom profile
+  tags: ['packages']
+
+- name: Create custom profile script
   blockinfile:
     path: "{{ profile_path }}"
     create: yes
-    block: 
-      export PATH=$PATH:/usr/local/bin 
-      export LANG=en_US.UTF-8
-  vars:
-    profile_path: "{{ ansible_os_family =='Debian' | ternary('/etc/profile.d/custom.sh','/etc/profile.d/custom.sh') }}"
+    mode: '0644'
+    block: |
+      # custom env variables
+      {% for key,value in custom_env_vars.items() %}
+      export {{ key }}="{{ value }}"
+      {% endfor %}
+      
+      # custom aliases
+      alias ll='ls -alF'
+      alias la='ls -A'
+      alias l='ls -CF'
+      alias ..='cd ..'
+      alias ...='cd ../..'
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - Custom Environment"
+  tags: ['configuration']
+
+- name: Set timezone
+  timezone:
+    name: "{{ timezone | default('UTC') }}"
+  tags: ['configuration']
+
+- name: Create ansible user (if applicable)
+  user:
+    name: ansible
+    shell: /bin/bash
+    create_home: yes
+    state: present
+  tags: ['users']
+
+- name: Add ansible user to sudoers
+  lineinfile:
+    path: /etc/sudoers
+    line: 'ansible ALL=(ALL) NOPASSWD:ALL'
+    create: yes
+    validate: 'visudo -cf %s'
+  tags: ['users']
+
+- name: Ensure services are started and enabled
+  systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop: "{{ services_to_enable | default([]) }}"
+  when: ansible_service_mgr == "systemd"
+  ignore_errors: yes
+  tags: ['services']
