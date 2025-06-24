@@ -1,12 +1,64 @@
-- hosts: centos
+- name: Configure CentOS VMs
+  hosts: centos 
   become: yes
+  gather_facts: yes
+  tags: ['centos']
+
+  pre_tasks:
+    - name: Wait for system to be ready
+      wait_for_connection: 
+        timeout: 300
+      tags: ['always']
+    - name: Gather system facts 
+      setup:
+      tags: ['always']
+
   roles:
-    - common
+    - role: common
+      tags: ['common']
+    - role: mysql
+      tags: ['mysql']
+  
   tasks:
     - name: Install CentOS-specific packages
       yum:
-        name:
-          - python3-pip
-          - epel-release
+        name: "{{ os_packages }}"
         state: present
-        
+      tags: ['packages']
+
+    - name: Configure CentOS specific settings 
+      blockinfile:
+        path: /etc/environment
+        block: |  
+          HISTCONTROL=ignoredups:ignorespace
+          HISTSIZE=1000
+          HISTFILESIZE=2000
+        create: yes
+      tags: ['configuration']
+
+    - name: Disable SELinux (for dev env)
+      selinux:
+        state: disable 
+      register: selinux_result
+      tags: ['security']
+    
+    - name: Create application directory 
+      file:
+        path: /opt/app 
+        state: directory 
+        mode: '0755'
+      tags: ['filesystem']
+    
+  post_tasks:
+    - name: Display Centos system information 
+      debug:
+        msg: | 
+          CentOS VM Configuration Complete:
+          - Hostname: {{ ansible_hostname }}
+          - OS: {{ ansible_distribution }} {{ ansible_distribution_verison }}
+          - Python: {{ ansible_python_version }}
+          - Architecture" {{ ansible_architecture }}
+          {% if selinux_result.changed %}
+          - SELinux: Disabled (reboot required)
+          {% endif %}
+        tags: ['info']

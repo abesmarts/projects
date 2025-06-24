@@ -1,12 +1,61 @@
-- hosts: ubuntu
+- name: Configure Ubuntu VMs
+  hosts: ubuntu
   become: yes
-  roles: 
-    - common
+  gather_facts: yes
+  tags: ['ubuntu']
+
+  pre_tasks:
+    - name: Wait for system to be ready
+      wait_for_connection:
+        timeout: 300
+      tags: ['always']
+
+    - name: Gather system facts 
+      setup:
+      tags: ['always']
+
+  roles:
+    - role: common
+      tags: ['common']
+    - role: mysql
+      tags: ['mysql']
   tasks:
     - name: Install Ubuntu-specific packages
       apt:
-        name:
-          - python3-pip 
-          - software-properties-common
+        name: " {{ os_packages }}"
         state: present
-      
+        update_cache: yes
+      tags: ['packages']
+
+    - name: Configure Ubuntu-specific settings
+      blockinfile:
+        path: /etc/environment
+        block: |  
+          DEBIAN_FRONTEND=nointeractive
+          APT_LISTCHANGES_FRONTEND=none 
+        create: yes
+      tags: ['configuration']
+    
+    - name: Ensure unattended-upgrade is configured
+      apt:
+        name: unattended-upgrade
+        state: present
+      tags: ['security']
+
+    - name: Create application directory
+      file:
+        path: /opt/app
+        state: directory
+        mode: '0755'
+      tags: ['filesystem']
+
+  post_tasks:
+    - name: Display Ubuntu system information
+      debug: 
+        msg: |
+          Ubuntu VM configuration Complete:
+          - Hostname: {{ ansible_hostname }}
+          - OS: {{ ansible_distribution }} {{ ansible_distribution_version }}
+          - Python: {{ ansible_python_version }}
+          - Architecture: {{ ansible_architecture }}
+        tags: ['info']
