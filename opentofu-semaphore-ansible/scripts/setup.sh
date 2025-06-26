@@ -4,10 +4,10 @@ set -e
 echo "Setting up OpenTofu, semaphore, Ansible, and MiniKube"
 
 # color codes for output
-RED = '\033[0;31m'
-GREEN = '\033[0;32m'
-YELLOW = '\033[1;33m'
-NC = '\033[0m' #no color
+RED= '\033[0;31m'
+GREEN= '\033[0;32m'
+YELLOW= '\033[1;33m'
+NC= '\033[0m' #no color
 
 
 # function to print colored output
