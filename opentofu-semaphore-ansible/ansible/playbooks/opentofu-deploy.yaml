@@ -1,0 +1,121 @@
+- name: OpenTofu Infrastructure Deployment
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars: 
+    opentofu_dir: "/tmp/opentofu"
+    state_backup_dir: "/tmp/opentofu/backups"
+
+  tasks:
+    - name: Ensure OpenTofu directory exists
+      file:
+        path: "{{ opentofu_dir }}"
+        state: directory
+        mode: "0755"
+      tags: ['setup']
+
+    - name: Ensure back directory exists
+      file:
+        path: "{{ state_backup_dir }}"
+        state: directory
+        mode: "0755"
+      tags: ['setup']
+
+    - name: Check if OpenTofu is initialized
+      stat:
+        path: "{{ opentofu_dir }}/.terraform"
+      register: terraform_dir
+      tags: ['init']
+    - name: initialized OpenTofu
+      command: tofu init
+      args:
+        chdir: "{{ opentofu_dir }}"
+      register: init_result
+      when: not terraform_dir.stat.exists
+      tags: ['init']
+
+    - name: Display initialization result 
+      debug:
+        var: init_result.stdout_lines
+      when: init_result is defined and init_result.stdout_lines is defined
+      tags: ['init']
+
+    - name: Validate OpenTofu configuration
+      command: tofu Validate
+      args: 
+        chdir: "{{ opentofu_dir }}"
+      register: validate_result
+      tags: ['validate']
+
+    - name: Display validation result
+      debug:
+        var: validate_result.stdout.stdout_lines
+      tags: ['validate']
+
+    - name: Plan OpenTofu changes
+      command: tofu plan -out=tfplan
+      args:
+        chdir: "{{ opentofu_dir }}"
+      register: plan_result
+      tags: ['plan']
+
+    - name: Display plan result
+      debug:
+        var: plan_result.stdout_lines
+      tags: ['plan']
+
+    - name: Backup existing state 
+      copy:
+        src: "{{ opentofu_dir }}/terraform.tfstate"
+        dest: "{{ state_backup_dir }}/terraform.tfstate.{{ ansible_date_time.epoch }}"
+        remote_src: yes
+      when: plan_result.rc ==0
+      ignore_errors: yes
+      tags: ['backup']
+
+    - name: Apply openTofu changes 
+      command: tofu apply -auto-approve tfplan
+      args:
+        chdir: "{{ opentofu_dir }}"
+      register: apply_result
+
+    - name: Display apply result
+      debug:
+        var: apply_result.stdout_lines
+      when: apply_result is defined
+      tags: ['apply']
+
+    - name: Get OpenTofu outputs
+      command: tofu output -json
+      args:
+        chdir: "{{ opentofu_dir }}"
+      register: output_result
+      when: apply_result is defined and apply_result.rc == 0
+      tags: ['output']
+
+    - name: Display OpenTofu outputs  
+      debug:
+        msg: "OpenTofu outputs: {{ output_result.stdout | from_json }}"
+      when: output_result is defined and output_result.stdout
+      tags: ['output']
+
+    - name: wait for Kubernetes resources to be ready 
+      command: kubectl wait --for=condition=Ready pods -all -n opentofu-ansible --timeout=300s
+      register: wait_result
+      when: apply_result is defined and apply_result.rc == 0
+      ignore_errors: yes
+      tags: ['wait']
+
+    - name: Display wait results
+      debug:
+        msg: |
+          Kubernetes resources Status:
+          {% if wait_result.rc == 0 %}
+          All pods are ready!
+          {% else %}
+          Some pods may not be ready yet. Check with: kubectl get pods -n opentofu-ansible 
+          {% endif %}
+        
+  
+    
+

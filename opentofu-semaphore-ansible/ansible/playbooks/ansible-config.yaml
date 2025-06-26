@@ -1,0 +1,130 @@
+- name: Ansible VM configuration Pipeline
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    ansible_dir: "/tmp/ansible"
+    max_retries: 3
+    retry_delay: 30
+  
+  tasks:  
+    - name: Ensure Ansible directory exists
+      file: 
+        path: " {{ ansible_dir }}"
+        state: directory
+        mode: "0755"
+      tags: ['setup']
+
+    - name: wait for pods to be in running state
+      command: kubectl wait --for=condition=Ready pods --all -n opentofu-ansible --timeout=600s
+      register: wait_pods
+      retries: "{{ max_retries }}"
+      delay: "{{ retry_delay }}"
+      until: wait_pods.rc == 0
+      tags: ['status']
+
+    - name: Get pod status
+      command: kubectl get pods -n opentofu-ansible -o json
+      register: pod_status
+      tags: ['status']
+    
+    - name: Display pod information 
+      debug:
+        msg: |
+          Pod Status:
+            {% set pods = (pod_status.stdout | from_json).items %}
+            {% for pod in pods %}
+            - name: {{ pod.metadata.name }}
+              Status: {{ pod.status.phase }}
+              Ready: {{ pod.status.containerStatuses[0].ready if pod.status.containerStatuses else 'N/A' }}
+            {% endfor %}
+      tags: ['status']
+
+    - name: Test dynamic inventory script 
+      command: python3 {{ ansible_dir }}/inventory/k8s_inventory.py --list 
+      register: inventory_test
+      tags: ['inventory']
+    - name: Display inventory information
+      debug:
+        msg: "Dynamic inventory: {{ inventory_test.stdout | from_json }}"
+      tags: ['inventory']
+
+    - name: Run ubuntu configuration playbook
+      command: >
+        ansible-playbook
+        -i {{ ansible_dir }}/inventory/k8s_inventory.py
+        {{ ansible_dir }}/playbook/ubuntu.yaml 
+        -v 
+      register: ubuntu_result
+      ignore_errors: yes
+      tags: ['ubuntu']
+
+    - name: Display Ubuntu configuration result
+      debug:
+        msg: |
+          Ubuntu configuration:
+          Return Code" {{ ubuntu_result.rc }}
+          {% if ubuntu_result.rc == 0 %}
+          Status: SUCCESS
+          {% else %}
+          Status: FAILED
+          ERROR: {{ ubuntu_result.rc == 0 }}
+          {% endif %}
+      tags: ['ubuntu']    
+
+    - name: Run CentOS configuration playbook 
+      command: > 
+        ansible-playbook 
+        -i {{ ansible_dir }}/inventory/k8s_inventory.py
+        {{ ansible_dir }}/playbooks/centos.yaml
+        -v
+      register: centos_result
+      ignore_errors: yes
+      tags: ['centos']
+
+    - name: Display Centos Configuration result 
+      debug:
+        msg: |
+          CentOS Configuration:
+          Retrun Code: {{ centos_result.rc }}
+          {% if centos_result.rc == 0 %}
+          Status: SUCCESS
+          {% else %}
+          Status: FAILED
+          ERROR: {{ centos_result.stderr }}
+          {% endif % }
+      tags: ['centos']
+
+    - name: Verify VM configuration
+      command: kubectl exec -n opentofu-ansible {{ item }} -- cat /etc/profile.d/custom.sh
+      register: verify_results
+      loop: 
+        - "deployment/ubuntu-vm"
+        - "deployment/centos-vm"
+      ignore_errors: yes
+      tags: ['verify']
+    - name: Disable verification results  
+      debug:
+        msg: |
+          Configuration Verification:
+          {% for result in verify_results.results %}
+          - {{ result.item }}: {{ 'CONFIGURED' if result.rc ==0 else 'FAILED' }}
+          {% if result.rc == 0 %}
+            Custom profile content found.
+          {% endif %}
+          {% endfor %}
+      tags: ['verify']
+    
+    - name: Generate configuration summary
+      debug:
+        msg: | 
+          === Ansible Configuration Summary ===
+          Ubuntu VM: {{ 'SUCCESS' if ubuntu_result.rc == 0 else 'FAILED' }}
+          CentOS VM: {{ 'SUCCESS' if centos_result.rc == 0 else 'FAILED'}}
+
+          Next Steps:
+          1. Check pod logs: kubectl logs -n opentofu-ansible <pod-name>
+          2. Access VMs: kubectl exec -it -n opentofu-ansible deployment/<vm-name> -- bash 
+          3. View Minikube dashboard: minikube dashboard 
+      tags: ['summary']
+      
