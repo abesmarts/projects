@@ -80,8 +80,8 @@ fi
 
 # Making necessary direcoties
 print_status "Creating project directories..."
-mkdir -p opentofu anisble/inventory ansible/group_vars ansible/roles/common/ {tasks,handlers,defaults,templates} ansible/roles/mysql/{tasks, defaults, templates} ansible/playbooks sempahore
-
+#mkdir -p opentofu anisble/inventory ansible/group_vars ansible/roles/common/ {tasks,handlers,defaults,templates} ansible/roles/mysql/{tasks, defaults, templates} ansible/playbooks sempahore
+cd ~/projects/opentofu-semaphore-ansible/
 # Making inventory script execyutable
 chmod +x ansible/inventory/k8s_inventory.py
 
