@@ -1,4 +1,3 @@
-version: '3.8'
 services:
     mysql:
         image: mysql:8.0
@@ -39,7 +38,7 @@ services:
             SEMAPHORE_ADMIN_NAME: Admin
             SEMAPHORE_ADMIN_EMAIL: admin@localhost
             SEMAPHORE_PLAYBOOK_PATH: /tmp/semaphore/
-            SEMAPHORE_WEB_ROOT=http://localhost:3000
+            SEMAPHORE_WEB_ROOT="http://localhost:3000"
         volumes:
             - ~/.kube:/home/semaphore/.kube:ro
             - ~/.ssh:/home/semaphore/.ssh:ro

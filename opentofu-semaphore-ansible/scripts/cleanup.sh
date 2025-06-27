@@ -22,6 +22,7 @@ print_warning() {
 
 # Stop and remove Semaphore Containers 
 print_status "Stopping Semaphore UI and MySQL containers..."
+cd ~/projects/opentofu-semaphore-ansible/
 cd semaphore
 docker compose down -v
 cd ..
