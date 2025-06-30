@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS deployments (
     metadata JSON,
     created_by VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_project_type (project_name, deployment_type),
     INDEX idx_status (status),
     INDEX idx_created_at (created_at) 
@@ -46,9 +46,9 @@ CREATE TABLE IF NOT EXISTS deployments (
 
 INSERT INTO deployments (project_name, deployment_type, environment, version, status,created_by)
 VALUES
-    ("opentofu-ansible-integration",'combined','development','1.0.0','pending','system')
-    ("opentofu-ansible-integration",'opentofu','development','1.0.0','pending','system')
-    ("opentofu-ansible-integration",'ansible','development','1.0.0','pending','system')
+    ("opentofu-ansible-integration",'combined','development','1.0.0','pending','system'),
+    ("opentofu-ansible-integration",'opentofu','development','1.0.0','pending','system'),
+    ("opentofu-ansible-integration",'ansible','development','1.0.0','pending','system');
 
 
 SHOW TABLES;

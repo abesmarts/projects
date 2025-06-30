@@ -22,6 +22,7 @@ print_warning() {
 
 # Stop and remove Semaphore Containers 
 print_status "Stopping Semaphore UI and MySQL containers..."
+
 cd ~/projects/opentofu-semaphore-ansible/
 cd semaphore
 docker compose down -v
@@ -31,7 +32,7 @@ cd ..
 print_status "Destroying OpenTofu resources..."
 cd opentofu
 if [ -f terraform.tfstate ]; then   
-    tofu destory -auto-approve
+    tofu destroy -auto-approve
 fi 
 cd ..
 

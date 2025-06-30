@@ -9,7 +9,7 @@ services:
             MYSQL_DATABASE: semaphore
             MYSQL_RANDOM_ROOT_PASSWORD: yes
         volumes:
-            - mysql-data:/var/lib/mysql
+            - mysql_data:/var/lib/mysql
             - ./init-mysql.sql:/docker-entrypoint-initdb.d/init-mysql.sql:ro
         networks:
             - semaphore_network
@@ -21,30 +21,31 @@ services:
 
     semaphore:
         ports:
-            - "3000:3000"
+            - 3000:3000
         depends_on:
             mysql:
                 condition: service_healthy
         image: semaphoreui/semaphore:v2.15.0
         restart: unless-stopped
         environment:
-            - SEMAPHORE_DB_DIALECT: mysql
-            - SEMAPHORE_DB_HOST: mysql
-            - SEMAPHORE_DB: semaphore
-            - SEMAPHORE_DB_USER: semaphore
-            - SEMAPHORE_DB_PASS: semaphore
-            - SEMAPHORE_ADMIN: admin
-            - SEMAPHORE_ADMIN_PASSWORD: semaphorepassword
-            - SEMAPHORE_ADMIN_NAME: Admin
-            - SEMAPHORE_ADMIN_EMAIL: admin@localhost
-            - SEMAPHORE_PLAYBOOK_PATH: /tmp/semaphore/
-            - SEMAPHORE_WEB_ROOT="http://localhost:3000"
+            SEMAPHORE_DB_DIALECT: mysql
+            SEMAPHORE_DB_HOST: mysql
+            SEMAPHORE_DB_NAME: semaphore
+            SEMAPHORE_DB_USER: semaphore
+            SEMAPHORE_DB_PASS: semaphore
+            SEMAPHORE_ADMIN: admin
+            SEMAPHORE_ADMIN_PASSWORD: semaphorepassword
+            SEMAPHORE_ADMIN_NAME: Admin
+            SEMAPHORE_ADMIN_EMAIL: admin@localhost
+            #SEMAPHORE_PLAYBOOK_PATH: /tmp/semaphore/
+            
         volumes:
             - ~/.kube:/home/semaphore/.kube:ro
             - ~/.ssh:/home/semaphore/.ssh:ro
             - ../opentofu:/tmp/opentofu:ro
             - ../ansible:/tmp/ansible:ro
             - semaphore_data:/tmp/semaphore
+            - /Users/asmarts/projects/opentofu-semaphore-ansible/:/mnt/localproject:ro
         networks:
             - semaphore_network
         healthcheck:
@@ -54,9 +55,9 @@ services:
             interval: 30s
 
 volumes:
-    mysql-data: {driver: local}
+    mysql_data: {driver: local}
     
-    semaphore-data: {driver: local}
+    semaphore_data: {driver: local}
 
 networks:
     semaphore_network: {driver: "bridge"}

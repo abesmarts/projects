@@ -93,12 +93,12 @@ cd ..
 
 
 # wait for services to start 
-print_status "Waiting for servuces to initialize..."
+print_status "Waiting for services to initialize..."
 sleep 30
 
-# create MySQL tables for state storage
+# # create MySQL tables for state storage
 print_status "Initialize MySQL database tables..."
-docker exec -i semaphore_mysql_1 mysql -u semaphore -p semaphore semaphore < semaphore/init-mysql.sql
+docker exec -i semaphore-mysql-1  mysql -u semaphore -psemaphore semaphore < semaphore/init-mysql.sql
 
 # initializing OpenTofu 
 print_status "Initializing OpenTofu..." 
