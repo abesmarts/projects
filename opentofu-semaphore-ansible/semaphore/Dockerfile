@@ -17,11 +17,10 @@ RUN pip3 install --no-cache-dir ansible kubernetes PyMySQL boto3
 #creating dir fro requirments.txt
 RUN mkdir -p /etc/semaphore
 
-# Switch back to semaphore user
-USER semaphore
-
 #verify installs
 RUN tofu version && kubectl version --client && ansible --version
+
+
 
 #setting up working dir
 WORKDIR /tmp/semaphore
