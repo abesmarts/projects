@@ -29,10 +29,8 @@ WORKDIR /tmp/semaphore
 #Exposing ports
 EXPOSE 3000
 
-ENTRYPOINT
-['/usr/local/bin/semaphore'] 
-CMD 
-["server","--config","/etc/semaphore/config.json"]
+ENTRYPOINT ["/usr/local/bin/semaphore"] 
+CMD ["server","--config","/etc/semaphore/config.json"]
 
 
 
