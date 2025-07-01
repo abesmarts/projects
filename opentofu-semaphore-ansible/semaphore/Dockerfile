@@ -20,10 +20,12 @@ RUN mkdir -p /etc/semaphore
 #verify installs
 RUN tofu version && kubectl version --client && ansible --version
 
-
+USER semaphore
 
 #setting up working dir
 WORKDIR /tmp/semaphore
 
 #Exposing ports
 EXPOSE 3000
+ENTRYPOINt ["/usr/local/bin/semaphore"]
+CMD ["server", "--config","/etc/semaphore/config.json"]
