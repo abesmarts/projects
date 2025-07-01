@@ -49,6 +49,7 @@ services:
             - ../opentofu:/tmp/opentofu:ro
             - ../ansible:/tmp/ansible:ro
             - semaphore_data:/tmp/semaphore
+            - /Users/asmarts/projects/opentofu-semaphore-ansible/opentofu:/mnt/localprojectopentofu:ro
             - ./requirements.txt:/etc/semaphore/requirements.txt:ro
         networks:
             - semaphore_network
