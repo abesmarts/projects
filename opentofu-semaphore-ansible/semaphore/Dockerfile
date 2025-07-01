@@ -4,7 +4,7 @@ FROM semaphoreui/semaphore:v2.15.0
 ENV OPENTOFU_VERSION=1.10.1
 ENV OPENTOFU_ARCH=linux_amd64
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && RUN apt-get install -y \
 curl \
 unzip \
 wget \
