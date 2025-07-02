@@ -40,7 +40,7 @@ resource "kubernetes_deployment" "mysql" {
         }
         template {
             metadata {
-                labels {
+                labels = {
                     app = "mysql"
                 }
             }
@@ -74,7 +74,7 @@ resource "kubernetes_deployment" "mysql" {
                         name = "mysql-persistent-storage"
                         mount_path = "/var/lib/mysql"
                     }
-                    resource {
+                    resources {
                         requests = {
                             memory = "512Mi"
                             cpu = "250m"
