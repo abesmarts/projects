@@ -14,7 +14,7 @@ output "ubuntu_vm_name" {
 }
 output "ubuntu_vm_ready_replicas" {
     description = "Number of ready replicas in the ubuntu_vm deployment" 
-    value = kubernetes_deployment.ubuntu_vm.status[0].ubuntu_vm_ready_replicas
+    value = kubernetes_deployment.ubuntu_vm.ubuntu_vm_ready_replicas
 }
 output "ubuntu_vm_labels" {
     description = "Labels assigned to the ibinti_vm deployment"
