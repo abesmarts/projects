@@ -44,6 +44,8 @@ services:
             SEMAPHORE_PLAYBOOK_PATH: /tmp/semaphore/
             
         volumes:
+            - ~/.ssh:/root/.ssh:ro
+            - ~/.kube:/root/.kube:ro
             - ~/.kube:/home/semaphore/.kube:ro
             - ../opentofu:/tmp/opentofu:ro
             - ../ansible:/tmp/ansible:ro

@@ -16,8 +16,8 @@ output "centos_vm_deployment" {
 output "mysql_service" {
     description = "MySQL service name and port"
     value = var.enable_mysql ? {
-        name = kubernetes_service.mysql[0].metadata[0].name
-        port = kubernetes_service.mysql[0].spec[0].port[0].port
+        name = kubernetes_service.mysql.metadata[0].name
+        port = kubernetes_service.mysql.spec[0].port[0].port
     } : null
 }
 

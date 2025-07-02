@@ -52,7 +52,7 @@ resource "kubernetes_deployment" "mysql" {
                         name = "MYSQL_ROOT_PASSWORD"
                         value_from {
                             secret_key_ref {
-                                name = kubernetes_secret.mysql_secret.metadata[0].name
+                                name = kubernetes_secret.mysql_credentials.metadata[0].name
                                 key = "root-password"
                             }
                         }
@@ -89,7 +89,7 @@ resource "kubernetes_deployment" "mysql" {
                 volume {
                     name = "mysql-persistent-storage"
                     persistent_volume_claim {
-                        claim_name = kubernetes_persistent_volume_claim.mysql_pvc.metadata[0].name
+                        claim_name = kubernetes_persistent_volume_claim.mysql_pvc[0].metadata[0].name
                     }
                 }
             }

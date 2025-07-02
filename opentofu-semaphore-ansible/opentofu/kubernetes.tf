@@ -23,8 +23,8 @@ resource "kubernetes_secret" "ssh_keys" {
         }
     }
     data = {
-        "id_rsa" = file("/home/semaphore/.ssh/id_rsa")
-        "id_rsa.pub" = file("/home/semaphore/.ssh/id_rsa.pub")
+        "id_rsa" = file("/root/.ssh/id_rsa")
+        "id_rsa.pub" = file("/root/.ssh/id_rsa.pub")
     }
     type = "Opaque"
 }
@@ -59,6 +59,6 @@ resource "kubernetes_config_map" "ansible_config" {
         }
     }
     data = {
-        "ansible.cfg" = file("/mnt/localprojectopentofu/ansible/ansible.cfg")
+        "ansible.cfg" = file("../ansible/ansible.cfg")
     }
 }
