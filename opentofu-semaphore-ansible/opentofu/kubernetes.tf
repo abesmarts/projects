@@ -1,10 +1,6 @@
-provider "kubernetes" {
-    config_path = "/home/semaphore/.kube/config"
-    config_context = "minikube"
-}
 
-resource "kubernetes_namespace"
-"opentofu_ansible" {
+
+resource "kubernetes_namespace" "opentofu_ansible" {
     metadata {
         name = var.kubernetes_namespace
         labels = {
