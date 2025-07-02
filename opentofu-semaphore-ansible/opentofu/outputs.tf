@@ -12,10 +12,7 @@ output "ubuntu_vm_name" {
     description = "The Name of the kuburnetes deployment for ubuntu_vm"
     value = kubernetes_deployment.ubuntu_vm.metadata[0].name
 }
-output "ubuntu_vm_replicas" {
-    description = "Number of ready replicas in the ubuntu_vm deployment" 
-    value = kubernetes_deployment.ubuntu_vm.metadata[0].vm_replicas
-}
+
 output "ubuntu_vm_labels" {
     description = "Labels assigned to the ibinti_vm deployment"
     value = kubernetes_deployment.ubuntu_vm.metadata[0].labels
