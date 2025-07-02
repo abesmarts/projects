@@ -4,6 +4,7 @@
   gather_facts: no
   vars:
     ansible_dir: "/tmp/ansible"
+    opentofu_dir: "/tmp/opentofu"
     max_retries: 3
     retry_delay: 45
   
@@ -16,7 +17,7 @@
       tags: ['setup']
 
     - name: wait for pods to be in running state
-      command: kubectl wait --for=condition=Ready pods --all -n opentofu-ansible --timeout=600s
+      command: kubectl wait --for=condition=Ready pods --all -n opentofu-ansible-integration --timeout=600s
       register: wait_pods
       retries: "{{ max_retries }}"
       delay: "{{ retry_delay }}"
@@ -24,7 +25,7 @@
       tags: ['status']
 
     - name: Get pod status
-      command: kubectl get pods -n opentofu-ansible -o json
+      command: kubectl get pods -n opentofu-ansible-integration -o json
       register: pod_status
       tags: ['status']
     
@@ -53,7 +54,7 @@
       command: >
         ansible-playbook
         -i {{ ansible_dir }}/inventory/k8s_inventory.py
-        {{ ansible_dir }}/playbook/ubuntu.yaml 
+        {{ opentofu_dir }}/playbook/ubuntu.yaml 
         -v 
       register: ubuntu_result
       ignore_errors: yes
@@ -96,7 +97,7 @@
       tags: ['centos']
 
     - name: Verify VM configuration
-      command: kubectl exec -n opentofu-ansible {{ item }} -- cat /etc/profile.d/custom.sh
+      command: kubectl exec -n opentofu-ansible-integration {{ item }} -- cat /etc/profile.d/custom.sh
       register: verify_results
       loop: 
         - "deployment/ubuntu-vm"
@@ -123,8 +124,8 @@
           CentOS VM: {{ 'SUCCESS' if centos_result.rc == 0 else 'FAILED'}}
 
           Next Steps:
-          1. Check pod logs: kubectl logs -n opentofu-ansible <pod-name>
-          2. Access VMs: kubectl exec -it -n opentofu-ansible deployment/<vm-name> -- bash 
+          1. Check pod logs: kubectl logs -n opentofu-ansible-integration <pod-name>
+          2. Access VMs: kubectl exec -it -n opentofu-ansible-integration deployment/<vm-name> -- bash 
           3. View Minikube dashboard: minikube dashboard 
       tags: ['summary']
       
