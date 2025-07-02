@@ -47,7 +47,7 @@ resource "kubernetes_secret" "mysql_credentials" {
     type = "Opaque"
 }
 
-resource "kubernetes_deployment" "unbuntu_vm" {
+resource "kubernetes_deployment" "ubuntu_vm" {
     metadata {
         name = "unbuntu-vm"
         namespace = kubernetes_namespace.opentofu_ansible.metadata[0].name
