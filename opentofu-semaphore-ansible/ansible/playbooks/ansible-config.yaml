@@ -5,7 +5,7 @@
   vars:
     ansible_dir: "/tmp/ansible"
     max_retries: 3
-    retry_delay: 30
+    retry_delay: 45
   
   tasks:  
     - name: Ensure Ansible directory exists
