@@ -4,7 +4,7 @@ FROM semaphoreui/semaphore:v2.15.0
 #switching to root to install things 
 USER root
 RUN apt-get update && apt-get install -y curl unzip wget ca-certificates python3-pip && rm -rf /var/lib/apt/lists/*
-#RUN mkdir -p /usr/local/bin
+RUN mkdir -p /usr/local/bin/tofu
 # copying opentofu binary from minimal image
 COPY --from=opentofu /usr/local/bin/tofu /usr/local/bin/tofu
  # install kubectl
