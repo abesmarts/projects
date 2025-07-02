@@ -14,7 +14,7 @@ output "ubuntu_vm_name" {
 }
 
 output "ubuntu_vm_labels" {
-    description = "Labels assigned to the ibinti_vm deployment"
+    description = "Labels assigned to the ubuntu_vm deployment"
     value = kubernetes_deployment.ubuntu_vm.metadata[0].labels
 }
 

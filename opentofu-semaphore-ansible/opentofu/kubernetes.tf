@@ -36,7 +36,7 @@ resource "kubernetes_secret" "mysql_credentials" {
 
 resource "kubernetes_deployment" "ubuntu_vm" {
     metadata {
-        name = "unbuntu-vm"
+        name = "ubuntu-vm"
         namespace = kubernetes_namespace.opentofu-ansible.metadata[0].name
         labels = {
             app = "ubuntu-vm"
@@ -61,8 +61,8 @@ resource "kubernetes_deployment" "ubuntu_vm" {
             }
             spec {
                 container {
-                    image = "unbuntu:20.04"
-                    name = "unbuntu"
+                    image = "ubuntu:20.04"
+                    name = "ubuntu"
                     command = ["/bin/bash", "-c", "apt-get update && apt-get install -y openssh-server sudo python3 && service ssh start && sleep infinity"]
                     env {
                         name = "DEBIAN_FRONTEND"
