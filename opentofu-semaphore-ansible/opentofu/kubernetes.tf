@@ -3,7 +3,7 @@ provider "kubernetes" {
     config_context = "minikube"
 }
 
-resoure "kubernetes_namespace"
+resource "kubernetes_namespace"
 "opentofu_ansible" {
     metadata {
         name = var.kubernetes_namespace
