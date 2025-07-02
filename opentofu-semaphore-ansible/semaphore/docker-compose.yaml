@@ -46,8 +46,8 @@ services:
         volumes:
             - ~/.kube:/home/semaphore/.kube:ro
             - ~/.ssh:/home/semaphore/.ssh:ro
-            - ~/.ssh:/root/.ssh:ro
-            - ~/.kube:/root/.kube:ro
+            # - ~/.ssh:/root/.ssh:ro
+            # - ~/.kube:/root/.kube:ro
             - ../opentofu:/tmp/opentofu:ro
             - ../ansible:/tmp/ansible:ro
             - semaphore_data:/tmp/semaphore

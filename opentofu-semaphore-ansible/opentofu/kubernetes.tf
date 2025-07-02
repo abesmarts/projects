@@ -1,5 +1,5 @@
 provider "kubernetes" {
-    config_path = "/root/.kube/config"\
+    config_path = "/home/semaphore/.kube/config"\
     config_context = "minikube"
 }
 
@@ -26,8 +26,8 @@ resource "kubernetes_secret"
         }
     }
     data = {
-        "id_rsa" = file("/root/.ssh/id_rsa")
-        "id_rsa.pub" = file("/root/.ssh/id_rsa.pub")
+        "id_rsa" = file("/home/semaphore/.ssh/id_rsa")
+        "id_rsa.pub" = file("/home/semaphore/.ssh/id_rsa.pub")
     }
     type = "Opaque"
 }
