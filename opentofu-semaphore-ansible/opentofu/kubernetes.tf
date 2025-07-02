@@ -15,11 +15,11 @@ resource "kubernetes_namespace" "opentofu-ansible" {
 
 
 
-resource "kubernetes_secret" "mysql_credentials" {
+resource "kubernetes_secret" "mysql-credentials" {
     count = var.enable_mysql ? 1 : 0
 
     metadata {
-        name = "mysql_credentials"
+        name = "mysql-credentials"
         namespace = kubernetes_namespace.opentofu-ansible.metadata[0].name 
         labels = {
             app = "opentofu-ansible-integration"
@@ -102,9 +102,9 @@ resource "kubernetes_deployment" "ubuntu_vm" {
     }
 }
 
-resource "kubernetes_deployment" "centos_vm" {
+resource "kubernetes_deployment" "centos-vm" {
     metadata {
-        name = "centos_vm"
+        name = "centos-vm"
         namespace = kubernetes_namespace.opentofu-ansible.metadata[0].name
         labels = {
             app = "centos-vm"
