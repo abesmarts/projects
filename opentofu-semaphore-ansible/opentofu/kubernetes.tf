@@ -4,7 +4,9 @@ resource "kubernetes_namespace" "opentofu_ansible" {
     metadata {
         name = var.kubernetes_namespace
         labels = {
-            app = "opentofu-ansible-integration"
+            app= "opentofu-ansible-integration"
+            environment= "development"
+            managed-by= "opentofu"
         }
     }
 }
