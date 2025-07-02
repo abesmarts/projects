@@ -1,6 +1,6 @@
 output "kubernetes_namespace" {
     description = "The kubernetes namespace where resources are deployed"
-    value = kubernetes_namespace.opentofu_ansible.metadata[0].name 
+    value = kubernetes_namespace.opentofu-ansible.metadata[0].name 
 }
 
 output "ubuntu_vm_deployment" {
@@ -34,8 +34,8 @@ output "mysql_service" {
 output "vm_access_commands" {
     description = " Commands to access the VMs"
     value = {
-        ubuntu = "kubectl exec -it -n ${kubernetes_namespace.opentofu_ansible.metadata[0].name} deployment/$ {kubernetes_deployment.ubuntu_vm.metadata[0].name} -- bash"
-        centos = "kubectl exec -it -n ${kubernetes_namespace.opentofu_ansible.metadata[0].name} deployment/$ {kubernetes_deployment.centos_vm.metadata[0].name} -- bash"
+        ubuntu = "kubectl exec -it -n ${kubernetes_namespace.opentofu-ansible.metadata[0].name} deployment/$ {kubernetes_deployment.ubuntu_vm.metadata[0].name} -- bash"
+        centos = "kubectl exec -it -n ${kubernetes_namespace.opentofu-ansible.metadata[0].name} deployment/$ {kubernetes_deployment.centos_vm.metadata[0].name} -- bash"
         
     }
 }

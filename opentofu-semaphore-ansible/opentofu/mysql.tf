@@ -2,7 +2,7 @@ resource "kubernetes_persistent_volume_claim" "mysql_pvc" {
     count = var.enable_mysql ? 1 : 0 
     metadata {
         name = "mysql-pv-claim"
-        namespace = kubernetes_namespace.opentofu_ansible.metadata[0].name 
+        namespace = kubernetes_namespace.opentofu-ansible.metadata[0].name 
         labels = {
             app = "mysql"
             managed-by = "opentofu"
@@ -23,7 +23,7 @@ resource "kubernetes_deployment" "mysql" {
 
     metadata {
         name = "mysql"
-        namespace = kubernetes_namespace.opentofu_ansible.metadata[0].name 
+        namespace = kubernetes_namespace.opentofu-ansible.metadata[0].name 
         labels = {
             app = "mysql"
             managed-by = "opentofu"
@@ -100,7 +100,7 @@ resource "kubernetes_deployment" "mysql" {
 resource "kubernetes_service" "mysql" {
     metadata {
         name = "mysql"
-        namespace = kubernetes_namespace.opentofu_ansible.metadata[0].name
+        namespace = kubernetes_namespace.opentofu-ansible.metadata[0].name
         labels = {
             app = "mysql"
             managed-by = "opentofu"
