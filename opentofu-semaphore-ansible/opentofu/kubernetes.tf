@@ -14,8 +14,7 @@ resource "kubernetes_namespace"
 }
 
 
-resource "kubernetes_secret" 
-"ssh_keys" {
+resource "kubernetes_secret" "ssh_keys" {
     metadata {
         name = "ssh_keys"
         namespace = kubernetes_namespace.opentofu_ansible.metadata[0].name
@@ -32,8 +31,7 @@ resource "kubernetes_secret"
     type = "Opaque"
 }
 
-resource "kubernetes_secret" 
-"mysql_credentials" {
+resource "kubernetes_secret" "mysql_credentials" {
     count = var.enable_mysql ? 1 : 0
 
     metadata {
@@ -52,8 +50,7 @@ resource "kubernetes_secret"
     type = "Opaque"
 }
 
-resource "kubernetes_config_map" 
-"ansible_config" {
+resource "kubernetes_config_map" "ansible_config" {
     metadata {
         name = "ansible-config"
         namespace = kubernetes_namespace.opentofu_ansible.metadata[0].name
