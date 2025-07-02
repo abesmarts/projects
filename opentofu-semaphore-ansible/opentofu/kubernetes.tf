@@ -1,5 +1,5 @@
 provider "kubernetes" {
-    config_path = "/home/semaphore/.kube/config"\
+    config_path = "/home/semaphore/.kube/config"
     config_context = "minikube"
 }
 
