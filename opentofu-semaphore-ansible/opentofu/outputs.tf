@@ -8,6 +8,19 @@ output "ubuntu_vm_deployment" {
     value = kubernetes_deployment.ubuntu_vm.metadata[0].name
 }
 
+output "ubuntu_vm_name" {
+    description = "The Name of the kuburnetes deployment for ubuntu_vm"
+    value = kubernetes_deployment.ubuntu_vm.metadata[0].name
+}
+output "ubuntu_vm_ready_replicas" {
+    description = "Number of ready replicas in the ubuntu_vm deployment" 
+    value = kubernetes_deployment.ubuntu_vm.status[0].ubuntu_vm_ready_replicas
+}
+output "ubuntu_vm_labels" {
+    description = Labels assigned to the ibinti_vm deployment"
+    value = kubernetes_deployment.ubuntu_vm.metadata[0].labels
+}
+
 output "centos_vm_deployment" {
     description = "CentOS VM deployment name"
     value = kubernetes_deployment.centos_vm.metadata[0].name
