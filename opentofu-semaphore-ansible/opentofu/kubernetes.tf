@@ -1,6 +1,19 @@
+terraform {
+    required_version = ">= 1.0"
+    required_providers {
+        kubernetes = {
+            source = "hashicorp/kubernetes"
+            version = "~> 2.23.0"
+        }
+    }
+}
 
+provider "kubernetes" {
+    config_path = "/root/.kube/config"
+    config_context = "minikube"
+}
 
-resource "kubernetes_namespace" "opentofu-ansible" {
+resource "kubernetes_namespace" "opentofu-ansible-integration" {
     metadata {
         name = var.kubernetes_namespace
         labels = {
@@ -20,7 +33,7 @@ resource "kubernetes_secret" "mysql-credentials" {
 
     metadata {
         name = "mysql-credentials"
-        namespace = kubernetes_namespace.opentofu-ansible.metadata[0].name 
+        namespace = kubernetes_namespace.opentofu-ansible-integration.metadata[0].name 
         labels = {
             app = "opentofu-ansible-integration"
             component = "mysql" 
@@ -37,7 +50,7 @@ resource "kubernetes_secret" "mysql-credentials" {
 resource "kubernetes_deployment" "ubuntu_vm" {
     metadata {
         name = "ubuntu-vm"
-        namespace = kubernetes_namespace.opentofu-ansible.metadata[0].name
+        namespace = kubernetes_namespace.opentofu-ansible-integration.metadata[0].name
         labels = {
             app = "ubuntu-vm"
             os = "ubuntu"
@@ -105,7 +118,7 @@ resource "kubernetes_deployment" "ubuntu_vm" {
 resource "kubernetes_deployment" "centos-vm" {
     metadata {
         name = "centos-vm"
-        namespace = kubernetes_namespace.opentofu-ansible.metadata[0].name
+        namespace = kubernetes_namespace.opentofu-ansible-integration.metadata[0].name
         labels = {
             app = "centos-vm"
             os = "centos"
@@ -173,7 +186,7 @@ resource "kubernetes_deployment" "centos-vm" {
 resource "kubernetes_config_map" "ansible_config" {
     metadata {
         name = "ansible-config"
-        namespace = kubernetes_namespace.opentofu-ansible.metadata[0].name
+        namespace = kubernetes_namespace.opentofu-ansible-integration.metadata[0].name
         labels = {
             app  = "opentofu-ansible-integration"
             component = "ansible"

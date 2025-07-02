@@ -100,7 +100,7 @@
       tags: ['output']
 
     - name: wait for Kubernetes resources to be ready 
-      command: kubectl wait --for=condition=Ready pods -all -n opentofu-ansible --timeout=300s
+      command: kubectl wait --for=condition=Ready pods -all -n opentofu-ansible-integration --timeout=300s
       register: wait_result
       when: apply_result is defined and apply_result.rc == 0
       ignore_errors: yes
@@ -113,7 +113,7 @@
           {% if wait_result.rc == 0 %}
           All pods are ready!
           {% else %}
-          Some pods may not be ready yet. Check with: kubectl get pods -n opentofu-ansible 
+          Some pods may not be ready yet. Check with: kubectl get pods -n opentofu-ansible-integration 
           {% endif %}
         
   
