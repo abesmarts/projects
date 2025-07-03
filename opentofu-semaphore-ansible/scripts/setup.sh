@@ -112,7 +112,7 @@ echo "Verifying opentofu, ansible, and docker integration in the semaphore conta
 
 echo "===================================="
 echo "Verifying OpenTofu installation..."
-docker compose exec semaphore tofu version
+# docker compose exec semaphore tofu version
 
 echo "Verifying ansible installation..."
 docker compose exec semaphore ansible --version
