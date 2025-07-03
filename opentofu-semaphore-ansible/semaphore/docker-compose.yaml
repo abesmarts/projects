@@ -2,7 +2,7 @@ services:
     mysql:
         image: mysql:8.0
         restart: unless-stopped
-        hostname: mysql
+        # hostname: mysql
         environment:
             MYSQL_USER: semaphore
             MYSQL_PASSWORD: semaphore
@@ -24,13 +24,15 @@ services:
             context: .
             dockerfile: Dockerfile
 
-        ports:
-            - 3000:3000
+       
+        restart: unless-stopped
         depends_on:
             mysql:
                 condition: service_healthy
-        image: semaphoreui/semaphore:v2.15.0
-        restart: unless-stopped
+        ports:
+            - 3000:3000
+        # image: semaphoreui/semaphore:v2.15.0
+        
         environment:
             SEMAPHORE_DB_DIALECT: mysql
             SEMAPHORE_DB_HOST: mysql
@@ -39,17 +41,16 @@ services:
             SEMAPHORE_DB_PASS: semaphore
             SEMAPHORE_ADMIN: admin
             SEMAPHORE_ADMIN_PASSWORD: semaphorepassword
-            SEMAPHORE_ADMIN_NAME: Admin
+            SEMAPHORE_ADMIN_NAME: admin
             SEMAPHORE_ADMIN_EMAIL: admin@localhost
             SEMAPHORE_PLAYBOOK_PATH: /tmp/semaphore/
             
         volumes:
-            - ~/.kube:/root/.kube:ro
-            - ../opentofu:/tmp/opentofu:ro
-            - ../ansible:/tmp/ansible:ro
+            - /var/run/docker.sock:/var/run/docker.sock
+            - ../ansbile:/mnt/localproject/ansible:ro
+            - ../opentofu:/mnt/localproject/opentofu:ro
+            - ../requirements.txt:/etc/semaphore/requirements.txt:ro 
             - semaphore_data:/tmp/semaphore
-            - /Users/asmarts/projects/opentofu-semaphore-ansible/opentofu:/mnt/localprojectopentofu:ro
-            - ./requirements.txt:/etc/semaphore/requirements.txt:ro
         networks:
             - semaphore_network
         healthcheck:

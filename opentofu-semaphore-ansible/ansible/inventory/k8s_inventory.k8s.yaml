@@ -1,4 +1,0 @@
-plugin: kubernetes.core.k8s
-connections:
-  - namespace:
-    - opentofu-ansible-integration

@@ -61,13 +61,13 @@ fi
 
 
 
-# starting minikube
-minikube start --driver=docker --memory=4096 --cpus=2
+# # starting minikube
+# minikube start --driver=docker --memory=4096 --cpus=2
 
 
-#verify minikube
-kubectl config use-context minikube
-kubectl get nodes
+# #verify minikube
+# kubectl config use-context minikube
+# kubectl get nodes
 
 #getting ssh keys
 
@@ -88,8 +88,10 @@ chmod +x ./ansible/inventory/k8s_inventory.py
 #start semaphore ui
 print_status "Starting Semaphore UI with MySQL backend..."
 cd semaphore 
+docker compose down -v
+docker compose build --no-cache
 docker compose up -d
-cd ..
+
 
 
 # wait for services to start 
@@ -102,9 +104,23 @@ docker exec -i semaphore-mysql-1  mysql -u semaphore -psemaphore semaphore < sem
 
 # initializing OpenTofu 
 print_status "Initializing OpenTofu..." 
+cd ..
 cd opentofu 
 tofu init
 cd .. 
+
+echo "Verifying opentofu, ansible, and docker integration in the semaphore container"
+
+echo "===================================="
+echo "Verifying OpenTofu installation..."
+docker compose exec semaphore tofu version
+
+echo "Verifying ansible installation..."
+docker compose exec semaphore ansible --version
+
+echo "Verifying docker integration (should list running containers)..."
+docker compose exec semaphore docker ps
+
 
 print_status "Setup Completed Successfully!"
 echo ""
