@@ -16,13 +16,7 @@
         mode: "0755"
       tags: ['setup']
 
-    - name: wait for pods to be in running state
-      command: kubectl wait --for=condition=Ready pods --all -n opentofu-ansible-integration --timeout=600s
-      register: wait_pods
-      retries: "{{ max_retries }}"
-      delay: "{{ retry_delay }}"
-      until: wait_pods.rc == 0
-      tags: ['status']
+   
 
     - name: Get pod status
       command: kubectl get pods -n opentofu-ansible-integration -o json
