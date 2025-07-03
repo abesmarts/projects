@@ -73,35 +73,11 @@
           {% endif %}
       tags: ['ubuntu']    
 
-    - name: Run CentOS configuration playbook 
-      command: > 
-        ansible-playbook 
-        -i {{ ansible_dir }}/inventory/k8s_inventory.py
-        {{ ansible_dir }}/playbooks/centos.yaml
-        -v
-      register: centos_result
-      ignore_errors: yes
-      tags: ['centos']
-
-    - name: Display Centos Configuration result 
-      debug:
-        msg: |
-          CentOS Configuration:
-          Retrun Code: {{ centos_result.rc }}
-          {% if centos_result.rc == 0 %}
-          Status: SUCCESS
-          {% else %}
-          Status: FAILED
-          ERROR: {{ centos_result.stderr }}
-          {% endif % }
-      tags: ['centos']
-
     - name: Verify VM configuration
       command: kubectl exec -n opentofu-ansible-integration {{ item }} -- cat /etc/profile.d/custom.sh
       register: verify_results
       loop: 
         - "deployment/ubuntu-vm"
-        - "deployment/centos-vm"
       ignore_errors: yes
       tags: ['verify']
     - name: Disable verification results  
@@ -121,7 +97,7 @@
         msg: | 
           === Ansible Configuration Summary ===
           Ubuntu VM: {{ 'SUCCESS' if ubuntu_result.rc == 0 else 'FAILED' }}
-          CentOS VM: {{ 'SUCCESS' if centos_result.rc == 0 else 'FAILED'}}
+         
 
           Next Steps:
           1. Check pod logs: kubectl logs -n opentofu-ansible-integration <pod-name>
