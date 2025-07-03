@@ -12,7 +12,7 @@ provider "docker" {
 }
 
 resource "docker_image" "ubuntu" {
-    name = "rastasheep/ubuntu-sshd:22.04"
+    name = "rastasheep/ubuntu-sshd:18.04"
 }
 
 resource "docker_container" "vm1" {
