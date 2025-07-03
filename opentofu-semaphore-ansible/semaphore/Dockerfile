@@ -11,7 +11,7 @@ COPY --from=opentofu /usr/local/bin/tofu /usr/local/bin/tofu
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && chmod +x kubectl && mv kubectl /usr/local/bin/kubectl
 
 # Install Ansible
-RUN pip3 install --no-cache-dir ansible kubernetes PyMySQL boto3
+RUN pip3 install --no-cache-dir ansible kubernetes PyMySQL boto3 openshift paramiko jinja2
 
 #creating dir fro requirments.txt
 RUN mkdir -p /etc/semaphore
@@ -26,5 +26,5 @@ WORKDIR /tmp/semaphore
 
 #Exposing ports
 EXPOSE 3000
-ENTRYPOINt ["/usr/local/bin/semaphore"]
+ENTRYPOINT ["/usr/local/bin/semaphore"]
 CMD ["server", "--config","/etc/semaphore/config.json"]
