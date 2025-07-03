@@ -18,10 +18,6 @@ output "ubuntu_vm_labels" {
     value = kubernetes_deployment.ubuntu_vm.metadata[0].labels
 }
 
-output "centos-vm_deployment" {
-    description = "CentOS VM deployment name"
-    value = kubernetes_deployment.centos-vm.metadata[0].name
-}
 
 output "mysql_service" {
     description = "MySQL service name and port"
@@ -35,7 +31,7 @@ output "vm_access_commands" {
     description = " Commands to access the VMs"
     value = {
         ubuntu = "kubectl exec -it -n ${kubernetes_namespace.opentofu-ansible-integration.metadata[0].name} deployment/$ {kubernetes_deployment.ubuntu_vm.metadata[0].name} -- bash"
-        centos = "kubectl exec -it -n ${kubernetes_namespace.opentofu-ansible-integration.metadata[0].name} deployment/$ {kubernetes_deployment.centos-vm.metadata[0].name} -- bash"
+        
         
     }
 }
