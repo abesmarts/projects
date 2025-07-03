@@ -17,7 +17,7 @@ resource "docker_image" "ubuntu" {
 
 resource "docker_container" "vm1" {
     name = "ansible-vm1"
-    image = docker_image.ubuntu.latest
+    image = docker_image.ubuntu.image_id
     command = ["/usr/sbin/sshd", "-D"]
     ports {
         internal = 22
